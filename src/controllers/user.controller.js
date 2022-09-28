@@ -93,9 +93,9 @@ exports.generateRTCToken = async (req, resp, next) => {
     const APP_ID=process.env.AGORA_APPLE_ID;
     const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
     if (req.params.tokentype === 'userAccount') {
-      token = RtcTokenBuilder.buildTokenWithAccount(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
+      token = RtcTokenBuilder.buildTokenWithAccount(APP_ID, APP_CERTIFICATE, channelName, 0, role, privilegeExpireTime);
     } else if (req.params.tokentype === 'uid') {
-      token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
+      token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, 0, role, privilegeExpireTime);
       // return resp.json({success: true, token}) 
     } else {
       return resp.status(500).json({ 'error': 'token type is invalid' });
