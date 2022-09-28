@@ -91,11 +91,10 @@ exports.generateRTCToken = async (req, resp, next) => {
     //build the Token
     let token;
     const APP_ID=process.env.AGORA_APPLE_ID;
-const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
+    const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
     if (req.params.tokentype === 'userAccount') {
       token = RtcTokenBuilder.buildTokenWithAccount(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
     } else if (req.params.tokentype === 'uid') {
-      
       token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
       // return resp.json({success: true, token}) 
     } else {
@@ -112,13 +111,13 @@ const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
       }
     })
 
-    // if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
-    //   return resp.status(500).json({
-    //     error: 'Fcm Token not found'
-    //   })
-    // }
+    if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
+      return resp.status(500).json({
+        error: 'Fcm Token not found'
+      })
+    }
 
-    fcmTokenRow = {fcmToken: "dvQINutAS4az5_h1u0_EqG:APA91bFll9TgNSBuHoXuyNxadAtHOKlyJO6IMKoQ_QiFs-fQOSN42KP0_2qC9LkobU1eXshf2-CMztX-ZcyuMsQkbc0TuD2ImTnyLdWjitnQRePcKTTcIIrJHIkgZM0dnfYdpZnn6wyl"}
+    // fcmTokenRow = {fcmToken: "dvQINutAS4az5_h1u0_EqG:APA91bFll9TgNSBuHoXuyNxadAtHOKlyJO6IMKoQ_QiFs-fQOSN42KP0_2qC9LkobU1eXshf2-CMztX-ZcyuMsQkbc0TuD2ImTnyLdWjitnQRePcKTTcIIrJHIkgZM0dnfYdpZnn6wyl"}
 
     const { fcmToken } = fcmTokenRow
 
