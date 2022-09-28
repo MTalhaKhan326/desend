@@ -50,6 +50,114 @@ const verifySid = process.env.TWILIO_SERVICE_SID;
 const { backup, backupFromDoc } = require('firestore-export-import')
 const { RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole } = require('agora-access-token');
 const console = require("console");
+var FCM = require('fcm-node');
+
+exports.generateRTCToken = async (req, resp, next) => { 
+  // return resp.send({
+  //   hello: "world"
+  // })
+  //set the response header
+  try {
+    resp.header('Access-Control-Allow-Origin', '*');
+    //get the channel name
+    const channelName = req.params.channel;
+    if (!channelName) {
+      return resp.status(500).json({ 'error': 'channel is required' });
+    }
+    //get uid
+    let uid = req.params.uid;
+    if(!uid || uid === '') {
+        return resp.status(500).json({ 'error': 'uid is required' });
+    }
+    // get role
+    let role;
+    if (req.params.role === 'publisher') {
+        role = RtcRole.PUBLISHER;
+    } else if (req.params.role === 'audience') {
+        role = RtcRole.SUBSCRIBER
+    } else {
+        return resp.status(500).json({ 'error': 'role is incorrect' });
+    }
+    //get expire time
+    let expireTime = req.query.expiry;
+    if (!expireTime || expireTime === '') {
+      expireTime = 3600;
+    } else {
+      expireTime = parseInt(expireTime, 10);
+    }
+    //calculate the privilege expire time
+    const currentTime = Math.floor(Date.now() / 1000);
+    const privilegeExpireTime = currentTime + expireTime;
+    //build the Token
+    let token;
+    const APP_ID=process.env.AGORA_APPLE_ID;
+const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
+    if (req.params.tokentype === 'userAccount') {
+      token = RtcTokenBuilder.buildTokenWithAccount(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
+    } else if (req.params.tokentype === 'uid') {
+      
+      token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
+      // return resp.json({success: true, token}) 
+    } else {
+      return resp.status(500).json({ 'error': 'token type is invalid' });
+    }
+
+    // get user by uid
+    let fcmTokenRow = await UserFcmToken.findOne({
+      where: {
+        // fcmToken: {
+        //   [Op.not]: null
+        // },
+        userId: uid
+      }
+    })
+
+    // if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
+    //   return resp.status(500).json({
+    //     error: 'Fcm Token not found'
+    //   })
+    // }
+
+    fcmTokenRow = {fcmToken: "dvQINutAS4az5_h1u0_EqG:APA91bFll9TgNSBuHoXuyNxadAtHOKlyJO6IMKoQ_QiFs-fQOSN42KP0_2qC9LkobU1eXshf2-CMztX-ZcyuMsQkbc0TuD2ImTnyLdWjitnQRePcKTTcIIrJHIkgZM0dnfYdpZnn6wyl"}
+
+    const { fcmToken } = fcmTokenRow
+
+    var serverKey = "AAAA0ji_iG4:APA91bHgMuW__4Gy68Qa9HR6SZ39wZD_sCDV-RMVfTDhB7ru4Vom-sQBr1eLhDHGVbupXAMs0GcHJX3qAHgfbiW5JaysHYfZobO7BVfK2HDeRtTGEII3cvgW0JbKUNq-T0sXtni4qmDC"; //put your server key here 
+    var fcm = new FCM(serverKey);
+    var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+      to: fcmToken, 
+      
+      notification: {
+          title: 'hello title', 
+          body: 'world body',
+          android: {
+            channelId: "some_1"
+          }
+      },
+      
+      data: {
+          agoraToken: token 
+      }
+    };
+  
+    fcm.send(message, function(err, response) {
+      if(err) {
+        console.log('error in fcm')
+        console.log(err)
+      } else {
+        console.log('*****************************sent successfully')
+        console.log(response.results)
+      }
+    }) 
+
+    //return the token
+    return resp.json({ 'rtcToken': token });
+  } catch(e) {
+    return resp.json({
+      'error': e
+    })
+  }
+};
 
 exports.index = async (req, res) => {
   try {
@@ -1021,58 +1129,58 @@ exports.logOut = async (req, res) => {
   }
 };
 
-exports.generateRTCToken = async (req, resp, next) => {
+// exports.generateRTCToken = async (req, resp, next) => {
 
-  resp.header('Access-Control-Allow-Origin', '*');
-  let { query: { expireTime = 3600000, channelName, uid, } } = req;
-  let token;
-  let APP_ID = process.env.AGORA_APPLE_ID
-  let APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE
-  let role;
+//   resp.header('Access-Control-Allow-Origin', '*');
+//   let { query: { expireTime = 3600000, channelName, uid, } } = req;
+//   let token;
+//   let APP_ID = process.env.AGORA_APPLE_ID
+//   let APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE
+//   let role;
 
-  if (!channelName) {
-    return resp.status(500).json({ 'error': 'channel is required' });
-  }
+//   if (!channelName) {
+//     return resp.status(500).json({ 'error': 'channel is required' });
+//   }
 
-  if (!uid || uid === '') {
-    return resp.status(500).json({ 'error': 'uid is required' });
-  }
+//   if (!uid || uid === '') {
+//     return resp.status(500).json({ 'error': 'uid is required' });
+//   }
 
-  if (req.query.role === 'publisher') {
+//   if (req.query.role === 'publisher') {
 
-    role = RtcRole.PUBLISHER;
+//     role = RtcRole.PUBLISHER;
 
-  } else if (req.query.role === 'audience') {
+//   } else if (req.query.role === 'audience') {
 
-    role = RtcRole.SUBSCRIBER
+//     role = RtcRole.SUBSCRIBER
 
-  } else {
+//   } else {
 
-    return resp.status(500).json({ 'error': 'role is incorrect' });
-  }
+//     return resp.status(500).json({ 'error': 'role is incorrect' });
+//   }
 
-  if (!expireTime || expireTime === '') {
-    expireTime = 3600;
-  } else {
-    expireTime = parseInt(3600, 10);
-  }
+//   if (!expireTime || expireTime === '') {
+//     expireTime = 3600;
+//   } else {
+//     expireTime = parseInt(3600, 10);
+//   }
 
-  const currentTime = Math.floor(Date.now() / 1000);
-  const privilegeExpireTime = currentTime + expireTime;
+//   const currentTime = Math.floor(Date.now() / 1000);
+//   const privilegeExpireTime = currentTime + expireTime;
 
-  if (req.query.tokentype === 'userAccount') {
-    token = RtcTokenBuilder.buildTokenWithAccount(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
+//   if (req.query.tokentype === 'userAccount') {
+//     token = RtcTokenBuilder.buildTokenWithAccount(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
 
-  } else if (req.query.tokentype === 'uid') {
-    token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
+//   } else if (req.query.tokentype === 'uid') {
+//     token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
 
-  } else {
-    return resp.status(500).json({ 'error': 'token type is invalid' });
-  }
+//   } else {
+//     return resp.status(500).json({ 'error': 'token type is invalid' });
+//   }
 
-  return resp.json({ 'rtcToken': token });
+//   return resp.json({ 'rtcToken': token });
 
-}
+// }
 
 // exports.chatBackupNew = async (req, res, next) => {
 //   try {

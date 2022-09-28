@@ -37,7 +37,7 @@ userRouter.route("/send-message-notification").post(auth, sendMessageNotificatio
 userRouter.route("/reportuser").post(auth, reportUser);
 userRouter.route("/invitefriend").post(auth, inviteFriend);
 // userRouter.route("/chat-backup").get(chatBackup);
-userRouter.route("/rtc").get(nocache, generateRTCToken)
+userRouter.route("/agora-token/:channel/:role/:tokentype/:uid").get(nocache, generateRTCToken)
 // userRouter.route("/chat-backup-newwww").get(chatBackupNewwww);
 userRouter.route("/backupMessages").get(backupMessages);
 

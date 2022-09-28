@@ -20,7 +20,6 @@ app.use(express.urlencoded({ extended: false, limit: "500mb" }));
 // app.use('uploads',express.static('../src/uploads'));
 require("./utils/backup");
 
-
 const connectWithDB = async () => {
   try {
     await sequelize.authenticate();

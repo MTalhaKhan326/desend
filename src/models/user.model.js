@@ -46,6 +46,7 @@ User.init(
   {
     firstName: {
       type: DataTypes.TEXT,
+      allowNull: true
     },
     lastName: {
       type: DataTypes.TEXT,
@@ -110,5 +111,7 @@ User.init(
     modelName: "User",
   }
 );
+
+// User.sync({alter: true}) 
 
 module.exports = User;

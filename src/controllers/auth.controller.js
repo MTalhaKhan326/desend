@@ -35,7 +35,7 @@ exports.phoneRegistration = async (req, res) => {
       firstName,
       lastName,
       phone,
-      profileImg,
+      profileImg=null,
       password,
       socialLoginId,
       fromGoogle = false,
@@ -163,10 +163,21 @@ exports.verifyOtp = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
+    // return res.json({
+    //   hello: 'Hello world '
+    // })
     var { phone, password, email, fcmToken } = req.body;
+
+    if (!phone || !password) {
+      throw ({
+        message: 'Incomplete request'
+      })
+    }
 
     if (phone) {
       const result = phoneLogin(req.body);
+
+      
 
       if (result.error != null) {
         return res.status(status.BAD_REQUEST).json({
@@ -175,8 +186,10 @@ exports.login = async (req, res) => {
         });
       }
 
+
+
       var user = await User.findOne({
-        where: { phone },
+        where: { phone: phone }, 
         include: [
           {
             model: UserSetting,
@@ -188,6 +201,10 @@ exports.login = async (req, res) => {
           },
         ],
       });
+
+      // return res.status(200).json({
+      //   user
+      // })
 
       if (!user) {
         return res.status(status.NOT_FOUND).json({
