@@ -442,15 +442,24 @@ exports.getContactList = async (req, res) => {
               }
 
               if (user && user.id != req.user.id) {
-                user.dataValues.isregister = true;
                 await ContactList.findOne({
                   where: {
                     contact: user.id,
                     contactOf: req.user.id,
                   },
-                }).then((getcontactstatus) => {
+                }).then(async (getcontactstatus) => {
                   if (getcontactstatus) {
+                    user.dataValues.isregister = true;
                     user.dataValues.contactStatus = getcontactstatus.status;
+                    users.unshift(user);
+                    counter++;
+                  } else {
+                    await ContactList.create({
+                      contact: user.id,
+                      contactOf: req.user.id
+                    })
+                    user.dataValues.isregister = true;
+                    user.dataValues.contactStatus = 'unblocked';
                     users.unshift(user);
                     counter++;
                   }
