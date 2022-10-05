@@ -442,6 +442,7 @@ exports.getContactList = async (req, res) => {
               }
 
               if (user && user.id != req.user.id) {
+                user.dataValues.isregister = true;
                 await ContactList.findOne({
                   where: {
                     contact: user.id,
@@ -449,7 +450,6 @@ exports.getContactList = async (req, res) => {
                   },
                 }).then((getcontactstatus) => {
                   user.dataValues.contactStatus = getcontactstatus.status;
-                  user.dataValues.isregister = true;
                   users.unshift(user);
                   counter++;
                 });
