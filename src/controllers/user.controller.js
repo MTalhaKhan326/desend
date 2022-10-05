@@ -449,9 +449,11 @@ exports.getContactList = async (req, res) => {
                     contactOf: req.user.id,
                   },
                 }).then((getcontactstatus) => {
-                  user.dataValues.contactStatus = getcontactstatus.status;
-                  users.unshift(user);
-                  counter++;
+                  if (getcontactstatus) {
+                    user.dataValues.contactStatus = getcontactstatus.status;
+                    users.unshift(user);
+                    counter++;
+                  }
                 });
               }
 
