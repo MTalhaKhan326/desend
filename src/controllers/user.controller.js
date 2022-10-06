@@ -102,6 +102,7 @@ exports.generateRTCToken = async (req, resp, next) => {
     }
 
     // get user by uid
+
     let fcmTokenRow = await UserFcmToken.findOne({
       where: {
         // fcmToken: {
@@ -110,10 +111,16 @@ exports.generateRTCToken = async (req, resp, next) => {
         userId: uid
       }
     })
+    // return (
+    //   resp.json({
+    //     tokens: await UserFcmToken.findAll()
+    //   })
+    // )
 
     if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
       return resp.status(500).json({
         error: 'Fcm Token not found'
+        
       })
     }
 
@@ -127,8 +134,8 @@ exports.generateRTCToken = async (req, resp, next) => {
       to: fcmToken, 
       
       notification: {
-          title: 'hello title', 
-          body: 'world body',
+          title: 'Accept call?', 
+          body: 'Click Accept to accept the call!',
           android: {
             channelId: "some_1"
           }
@@ -492,6 +499,7 @@ exports.getContactList = async (req, res) => {
               return res.json({
                 status: success,
                 users: filtered,
+                hello: 'deployed'
               });
             }
           })
@@ -502,6 +510,7 @@ exports.getContactList = async (req, res) => {
     return res.status(status.INTERNAL_SERVER_ERROR).json({
       status: fail,
       error: error.message,
+      hello: 'error'
     });
   }
 };
@@ -614,7 +623,7 @@ exports.userUpdate = async (req, res) => {
     });
     if (!user) {
       return res.status(status.BAD_REQUEST).json({
-        status: 0,
+        status: 0,  
         message: UserNotFound,
       });
     }
@@ -949,7 +958,7 @@ exports.sendMessageNotification = async (req, res) => {
       body: notification,
     },
   };
-
+console.log('Payloadddddddd',payload)
   const getTokens = await UserFcmToken.findAll(
     {
       where: {
