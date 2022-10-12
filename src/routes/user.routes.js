@@ -5,6 +5,7 @@ const { logOut } = require("../controllers/user.controller");
 const { auth } = require("../middlewares/auth");
 // const { upload } = require("../utils/multerFIle");
 const { upload, uploadFile } = require("../utils/fileUpload");
+const { UserFcmToken, User } = require("../models");
 
 const userRouter = express.Router();
 
@@ -37,12 +38,9 @@ userRouter.route("/send-message-notification").post(auth, sendMessageNotificatio
 userRouter.route("/reportuser").post(auth, reportUser);
 userRouter.route("/invitefriend").post(auth, inviteFriend);
 // userRouter.route("/chat-backup").get(chatBackup);
-userRouter.route("/agora-token/:channel/:role/:tokentype/:uid").get(nocache, generateRTCToken)
+userRouter.route("/agora-token/:channel/:role/:tokentype/:uid/:calltype").get(nocache, generateRTCToken)
 // userRouter.route("/chat-backup-newwww").get(chatBackupNewwww);
 userRouter.route("/backupMessages").get(backupMessages);
-
-
-
 
 
 

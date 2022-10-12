@@ -52,7 +52,9 @@ const { RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole } = require('agora-ac
 const console = require("console");
 var FCM = require('fcm-node');
 
-exports.generateRTCToken = async (req, resp, next) => { 
+
+
+exports.generateRTCToken = async (req, resp, next) => {
   // return resp.send({
   //   hello: "world"
   // })
@@ -61,8 +63,12 @@ exports.generateRTCToken = async (req, resp, next) => {
     resp.header('Access-Control-Allow-Origin', '*');
     //get the channel name
     const channelName = req.params.channel;
+    let callType = req.params.calltype
     if (!channelName) {
       return resp.status(500).json({ 'error': 'channel is required' });
+    }
+    if (!callType || !['audioCall', 'videoCall'].includes(callType)) {
+      callType = 'audioCall'
     }
     //get uid
     let uid = req.params.uid;
@@ -138,7 +144,8 @@ exports.generateRTCToken = async (req, resp, next) => {
           body: 'Click Accept to accept the call!',
           android: {
             channelId: "some_1",
-            channelName: channelName
+            channelName: channelName,
+            callType: callType
           }
       },
       
