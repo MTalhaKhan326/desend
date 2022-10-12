@@ -150,7 +150,9 @@ exports.generateRTCToken = async (req, resp, next) => {
       },
       
       data: {
-          agoraToken: token 
+        agoraToken: token,
+        channelName: channelName,
+            callType: callType
       }
     };
   
