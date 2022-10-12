@@ -137,7 +137,8 @@ exports.generateRTCToken = async (req, resp, next) => {
           title: 'Accept call?', 
           body: 'Click Accept to accept the call!',
           android: {
-            channelId: "some_1"
+            channelId: "some_1",
+            channelName: channelName
           }
       },
       
