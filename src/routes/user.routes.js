@@ -15,6 +15,21 @@ const nocache = (_, resp, next) => {
   resp.header('Pragma', 'no-cache');
   next();
 }
+// userRouter.get('/update-name', async (req, res, next) => {
+//   res.json({
+//     res: await User.findAndCountAll({
+//       where: {
+//         id: 63
+//       }
+//     })
+//   })
+// }) 
+// userRouter.route("/fcmtokens").get(async (req, res, next) => {
+//   res.json({
+//     fcmTokens: await UserFcmToken.findAll()
+//   })
+// })
+
 // userRouter.use(authJwt);
 //Token will be check here using middleware named 'authJwt' before executing code of following route methods
 // userRouter.route("/chat-backupp").get(chatBackupNew);
@@ -50,8 +65,6 @@ userRouter.route("/").get(index);
 userRouter.route("/:id").get(getSingle);
 userRouter.route("/update/:id").post(update);
 userRouter.route("/changeStatus/:id").get(changeStatus);
-
-
 
 
 module.exports = userRouter;

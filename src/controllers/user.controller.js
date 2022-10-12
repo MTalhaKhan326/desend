@@ -111,18 +111,9 @@ exports.generateRTCToken = async (req, resp, next) => {
 
     let fcmTokenRow = await UserFcmToken.findOne({
       where: {
-        // fcmToken: {
-        //   [Op.not]: null
-        // },
         userId: uid
       }
     })
-    // return (
-    //   resp.json({
-    //     tokens: await UserFcmToken.findAll()
-    //   })
-    // )
-
     if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
       return resp.status(500).json({
         error: 'Fcm Token not found',
@@ -131,6 +122,8 @@ exports.generateRTCToken = async (req, resp, next) => {
         
       })
     }
+
+    const user = await User.findByPk(uid)
 
     // fcmTokenRow = {fcmToken: "dvQINutAS4az5_h1u0_EqG:APA91bFll9TgNSBuHoXuyNxadAtHOKlyJO6IMKoQ_QiFs-fQOSN42KP0_2qC9LkobU1eXshf2-CMztX-ZcyuMsQkbc0TuD2ImTnyLdWjitnQRePcKTTcIIrJHIkgZM0dnfYdpZnn6wyl"}
 
@@ -152,7 +145,8 @@ exports.generateRTCToken = async (req, resp, next) => {
       data: {
         agoraToken: token,
         channelName: channelName,
-            callType: callType
+        callType: callType,
+            caller: user
       }
     };
   
