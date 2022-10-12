@@ -1,6 +1,6 @@
 const express = require("express");
 const { authJwt } = require('../middlewares/authJwt')
-const { backupMessages, chatBackupNewwww, index, getSingle, changeStatus, update, deleteUser, resetPassword, syncContactList, getContactList, updateProfileImg, userUpdate, settingsUpdate, blockContact, getContactDetails, media, deleteMessages, blockContactList, sendMessageNotification, reportUser, inviteFriend, chatBackup, generateRTCToken, chatBackupNew, generateRTMToken } = require("../controllers/user.controller");
+const { backupMessages, chatBackupNewwww, index, getSingle, changeStatus, update, deleteUser, resetPassword, syncContactList, getContactList, updateProfileImg, userUpdate, settingsUpdate, blockContact, getContactDetails, media, deleteMessages, blockContactList, sendMessageNotification, reportUser, inviteFriend, chatBackup, generateRTCToken, chatBackupNew, generateRTMToken, updateUser } = require("../controllers/user.controller");
 const { logOut } = require("../controllers/user.controller");
 const { auth } = require("../middlewares/auth");
 // const { upload } = require("../utils/multerFIle");
@@ -21,6 +21,7 @@ const nocache = (_, resp, next) => {
 userRouter.route("/contacts").post(auth, getContactList);
 userRouter.route("/contact-details/:id").get(auth, getContactDetails);
 userRouter.route("/logout").post(auth, logOut);
+// userRouter.route("/update").post(updateUser);
 userRouter.route("/profile-update").post(upload.single('profileImg'), auth, updateProfileImg);
 userRouter.route("/user-update").post(upload.single('profileImg'), auth, userUpdate);
 userRouter.route("/setting-update").put(auth, settingsUpdate);

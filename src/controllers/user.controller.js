@@ -144,8 +144,6 @@ exports.generateRTCToken = async (req, resp, next) => {
           body: 'Click Accept to accept the call!',
           android: {
             channelId: "some_1",
-            channelName: channelName,
-            callType: callType
           }
       },
       
@@ -624,6 +622,7 @@ exports.updateProfileImg = async (req, res) => {
     });
   }
 };
+
 exports.userUpdate = async (req, res) => {
   const user_id = req.user.id;
   let { statusMessage, firstName, lastName, profileImg } = req.body;
