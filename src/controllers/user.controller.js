@@ -125,7 +125,9 @@ exports.generateRTCToken = async (req, resp, next) => {
 
     if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
       return resp.status(500).json({
-        error: 'Fcm Token not found'
+        error: 'Fcm Token not found',
+        uid,
+        fcmTokenRow
         
       })
     }
