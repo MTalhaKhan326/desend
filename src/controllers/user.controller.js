@@ -112,7 +112,10 @@ exports.generateRTCToken = async (req, resp, next) => {
     let fcmTokenRow = await UserFcmToken.findOne({
       where: {
         userId: uid
-      }
+      },
+      order: [
+        ['id', 'DESC']
+      ]
     })
     if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
       return resp.status(500).json({
