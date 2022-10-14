@@ -75,6 +75,8 @@ exports.generateRTCToken = async (req, resp, next) => {
     if(!uid || uid === '') {
         return resp.status(500).json({ 'error': 'uid is required' });
     }
+    let callerId = req.params.callerId
+    let caller = await User.findByPk(callerId)
     // get role
     let role;
     if (req.params.role === 'publisher') {
@@ -149,7 +151,8 @@ exports.generateRTCToken = async (req, resp, next) => {
         agoraToken: token,
         channelName: channelName,
         callType: callType,
-            caller: user
+            caller: caller,
+            callee: user
       }
     };
   
