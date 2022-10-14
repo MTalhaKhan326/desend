@@ -24,11 +24,11 @@ const nocache = (_, resp, next) => {
 //     })
 //   })
 // }) 
-// userRouter.route("/fcmtokens").get(async (req, res, next) => {
-//   res.json({
-//     fcmTokens: await UserFcmToken.findAll()
-//   })
-// })
+userRouter.route("/fcmtokens").get(async (req, res, next) => {
+  res.json({
+    fcmTokens: await UserFcmToken.findAll()
+  })
+})
 
 // userRouter.use(authJwt);
 //Token will be check here using middleware named 'authJwt' before executing code of following route methods
