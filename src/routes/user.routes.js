@@ -24,11 +24,25 @@ const nocache = (_, resp, next) => {
 //     })
 //   })
 // }) 
-userRouter.route("/fcmtokens").get(async (req, res, next) => {
+userRouter.route("/fcmtokens/:userId?").get(async (req, res, next) => {
+  const userId = req.params.userId
+  const options = {}
+  if(userId) {
+    return res.json(await UserFcmToken.findOne({
+      where: {
+        userId: userId
+      },
+      order: [
+        ['id', 'DESC']
+      ]
+    }))
+  }
   res.json({
-    fcmTokens: await UserFcmToken.findAll()
+    fcmTokens: await UserFcmToken.findAll(options)
   })
 })
+
+
 
 // userRouter.use(authJwt);
 //Token will be check here using middleware named 'authJwt' before executing code of following route methods
@@ -54,7 +68,7 @@ userRouter.route("/send-message-notification").post(auth, sendMessageNotificatio
 userRouter.route("/reportuser").post(auth, reportUser);
 userRouter.route("/invitefriend").post(auth, inviteFriend);
 // userRouter.route("/chat-backup").get(chatBackup);
-userRouter.route("/agora-token/:channel/:role/:tokentype/:uid/:calltype").get(nocache, generateRTCToken)
+userRouter.route("/agora-token/:channel/:role/:tokentype/:uid/:calltype/:callerId").get(nocache, generateRTCToken)
 // userRouter.route("/chat-backup-newwww").get(chatBackupNewwww);
 userRouter.route("/backupMessages").get(backupMessages);
 
