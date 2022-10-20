@@ -136,23 +136,21 @@ exports.generateRTCToken = async (req, resp, next) => {
 
     var serverKey = "AAAA0ji_iG4:APA91bHgMuW__4Gy68Qa9HR6SZ39wZD_sCDV-RMVfTDhB7ru4Vom-sQBr1eLhDHGVbupXAMs0GcHJX3qAHgfbiW5JaysHYfZobO7BVfK2HDeRtTGEII3cvgW0JbKUNq-T0sXtni4qmDC"; //put your server key here 
     var fcm = new FCM(serverKey);
-    var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+    var message = { // this may vary according to the message type (single recipient, multicast, topic, et cetera)
       to: fcmToken, 
-      
       notification: {
-          title: 'Accept call?', 
-          body: 'Click Accept to accept the call!',
-          android: {
-            channelId: "some_1",
-          }
+        title: 'Accept call?', 
+        body: 'Click Accept to accept the call!',
+        android: {
+          channelId: "some_1",
+        }
       },
-      
       data: {
         agoraToken: token,
         channelName: channelName,
         callType: callType,
-            caller: caller,
-            callee: user
+        caller: caller,
+        callee: user
       }
     };
   
@@ -224,14 +222,14 @@ exports.getSingle = async (req, res) => {
         "id",
         "email",
         "phone",
-        "city",
-        "country",
-        "isActive",
+        // "city",
+        // "country",
+        // "isActive",
         "firstName",
         "lastName",
-        "gender",
-        "age",
-        "dob",
+        // "gender",
+        // "age",
+        // "dob",
 
         [
           Sequelize.fn(

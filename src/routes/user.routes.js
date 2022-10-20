@@ -28,14 +28,16 @@ userRouter.route("/fcmtokens/:userId?").get(async (req, res, next) => {
   const userId = req.params.userId
   const options = {}
   if(userId) {
-    return res.json(await UserFcmToken.findOne({
-      where: {
-        userId: userId
-      },
-      order: [
-        ['id', 'DESC']
-      ]
-    }))
+    return res.json({
+      tokens: await UserFcmToken.findAll({
+        where: {
+          userId: userId
+        },
+        order: [
+          ['id', 'DESC']
+        ]
+      })
+    })
   }
   res.json({
     fcmTokens: await UserFcmToken.findAll(options)

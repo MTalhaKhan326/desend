@@ -5,7 +5,8 @@ const ContactList = require('./contactList.model');
 const UserPermission = require('./userpermission.model');
 const Permission = require('./permission.model');
 const UserFcmToken = require('./userFcmToken.model');
-const ChatBackup = require('./chatBackup.model')
+const ChatBackup = require('./chatBackup.model');
+const UserWalletInfo = require('./userWalletInfo.model');
 
 User.hasOne(ForgotPasswordToken, {
     onDelete: 'CASCADE',
@@ -29,6 +30,17 @@ User.belongsToMany(User, {
   foreignKey: 'contactOf',
   otherKey: 'contact'
   })
+
+User.hasOne(UserWalletInfo, {
+  onDelete: 'CASCADE',
+  foreignKey: 'userId',
+  as: 'walletInfo'
+})
+UserWalletInfo.belongsTo(User, {
+  onDelete: 'CASCADE',
+  foreignKey: 'userId',
+  as: 'user',
+})
   
 UserSetting.belongsTo(User, {
     onDelete: 'CASCADE',

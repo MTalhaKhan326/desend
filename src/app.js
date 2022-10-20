@@ -2,7 +2,7 @@ var express = require('express');
 const sequelize = require('./config/db.config');
 const cors = require("cors");
 const passport = require('passport')
-const { authRoutes, userRoutes, adminRoutes,twilioRoutes } = require('./routes/index.routes');
+const { authRoutes, userRoutes, adminRoutes,twilioRoutes, walletRoutes } = require('./routes/index.routes');
 const { getJwtStrategy } = require('./config/passport')
 const globalError = require('./middlewares/globalError')
 let multer = require('multer');
@@ -45,6 +45,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/twilio', twilioRoutes);
+app.use(`/api/v1/wallet`, walletRoutes)
 
 // ...
 
