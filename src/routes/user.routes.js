@@ -6,6 +6,7 @@ const { auth } = require("../middlewares/auth");
 // const { upload } = require("../utils/multerFIle");
 const { upload, uploadFile } = require("../utils/fileUpload");
 const { UserFcmToken, User } = require("../models");
+const { Op } = require("sequelize");
 
 const userRouter = express.Router();
 
@@ -24,6 +25,31 @@ const nocache = (_, resp, next) => {
 //     })
 //   })
 // }) 
+userRouter.get('/test', async (req, res) => {
+  // let user = await User.update({
+  //   firstName: 'ABC',
+  //   lastName: '11'
+  // }, {
+  //   where: {
+  //     id: 70
+  //   }
+  // })
+  // let user = await User.findOne({
+  //   where: {
+  //     phone: '+923218889358'
+  //   }
+  // })
+  let user = await User.findAll({
+    where: {
+      id: {
+        [Op.in]: [69, 70]
+      }
+    }
+  })
+  return res.status(200).json({
+    user
+  })
+})
 userRouter.route("/fcmtokens/:userId?").get(async (req, res, next) => {
   const userId = req.params.userId
   const options = {}
@@ -70,7 +96,7 @@ userRouter.route("/send-message-notification").post(auth, sendMessageNotificatio
 userRouter.route("/reportuser").post(auth, reportUser);
 userRouter.route("/invitefriend").post(auth, inviteFriend);
 // userRouter.route("/chat-backup").get(chatBackup);
-userRouter.route("/agora-token/:channel/:role/:tokentype/:uid/:calltype/:callerId").get(nocache, generateRTCToken)
+userRouter.route("/agora-token/:channel/:role/:tokentype/:uid/:calltype/:callerId/:isGroupCall?").get(nocache, generateRTCToken)
 // userRouter.route("/chat-backup-newwww").get(chatBackupNewwww);
 userRouter.route("/backupMessages").get(backupMessages);
 

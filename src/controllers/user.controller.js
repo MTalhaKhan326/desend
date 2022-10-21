@@ -70,6 +70,13 @@ exports.generateRTCToken = async (req, resp, next) => {
     if (!callType || !['audioCall', 'videoCall'].includes(callType)) {
       callType = 'audioCall'
     }
+    let isGroupCall = req.params.isGroupCall
+    if(isGroupCall === 'groupCall') {
+      isGroupCall = true
+    } else {
+      isGroupCall = false
+    }
+
     //get uid
     let uid = req.params.uid;
     if(!uid || uid === '') {
@@ -150,7 +157,8 @@ exports.generateRTCToken = async (req, resp, next) => {
         channelName: channelName,
         callType: callType,
         caller: caller,
-        callee: user
+        callee: user,
+        isGroupCall
       }
     };
   
