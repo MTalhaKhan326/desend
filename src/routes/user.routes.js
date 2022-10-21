@@ -34,18 +34,22 @@ userRouter.get('/test', async (req, res) => {
   //     id: 70
   //   }
   // })
-  // let user = await User.findOne({
+  let user = await User.findOne({
+    where: {
+      phone: '+923244644599'
+    },
+    include: [{
+      model: UserFcmToken,
+      as: 'fcmToken'
+    }]
+  })
+  // let user = await User.findAll({
   //   where: {
-  //     phone: '+923218889358'
+  //     id: {
+  //       [Op.in]: [69, 70]
+  //     }
   //   }
   // })
-  let user = await User.findAll({
-    where: {
-      id: {
-        [Op.in]: [69, 70]
-      }
-    }
-  })
   return res.status(200).json({
     user
   })

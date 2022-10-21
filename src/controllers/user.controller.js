@@ -71,7 +71,7 @@ exports.generateRTCToken = async (req, resp, next) => {
       callType = 'audioCall'
     }
     let isGroupCall = req.params.isGroupCall
-    if(isGroupCall === 'groupCall') {
+    if(isGroupCall && isGroupCall === 'groupCall') {
       isGroupCall = true
     } else {
       isGroupCall = false
