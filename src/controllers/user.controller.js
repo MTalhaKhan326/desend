@@ -1457,7 +1457,10 @@ exports.sendFcm = async (req, res, next) => {
     let userFcm = await UserFcmToken.findOne({
       where: {
         userId: userId
-      }
+      },
+      order: [
+        ['id', 'DESC']
+      ]
     })
     if(!userFcm || !userFcm.fcmToken) {
       throw('Fcm token not found')
