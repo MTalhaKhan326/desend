@@ -1473,8 +1473,8 @@ exports.sendFcm = async (req, res, next) => {
     }
     let result = await (new Promise((resolve, reject) => {
       fcm.send(message, (err, r) => {
-        if(err) reject(err)
-        else resolve(r)
+        if(err) reject(typeof err === 'string' ? JSON.parse(err) : err)
+        else resolve(typeof r === 'string' ? JSON.parse(r) : r)
       })
     }))
 
