@@ -1,6 +1,6 @@
 const express = require("express");
 const { authJwt } = require('../middlewares/authJwt')
-const { backupMessages, chatBackupNewwww, index, getSingle, changeStatus, update, deleteUser, resetPassword, syncContactList, getContactList, updateProfileImg, userUpdate, settingsUpdate, blockContact, getContactDetails, media, deleteMessages, blockContactList, sendMessageNotification, reportUser, inviteFriend, chatBackup, generateRTCToken, chatBackupNew, generateRTMToken, updateUser } = require("../controllers/user.controller");
+const { backupMessages, chatBackupNewwww, index, getSingle, changeStatus, update, deleteUser, resetPassword, syncContactList, getContactList, updateProfileImg, userUpdate, settingsUpdate, blockContact, getContactDetails, media, deleteMessages, blockContactList, sendMessageNotification, reportUser, inviteFriend, chatBackup, generateRTCToken, chatBackupNew, generateRTMToken, updateUser, sendFcm } = require("../controllers/user.controller");
 const { logOut } = require("../controllers/user.controller");
 const { auth } = require("../middlewares/auth");
 // const { upload } = require("../utils/multerFIle");
@@ -111,6 +111,7 @@ userRouter.route("/").get(index);
 userRouter.route("/:id").get(getSingle);
 userRouter.route("/update/:id").post(update);
 userRouter.route("/changeStatus/:id").get(changeStatus);
+userRouter.post("/sendFcm", auth, sendFcm)
 
 
 module.exports = userRouter;

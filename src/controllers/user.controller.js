@@ -1450,3 +1450,43 @@ exports.backupMessages = async () => {
     return console.log("Error...", error.message);
   }
 };
+
+exports.sendFcm = async (req, res, next) => {
+  try {
+    let userId = req.user.id 
+    let userFcm = await UserFcmToken.findOne({
+      where: {
+        userId: userId
+      }
+    })
+    if(!userFcm || !userFcm.fcmToken) {
+      throw('Fcm token not found')
+    }
+
+    let serverKey = "AAAA0ji_iG4:APA91bHgMuW__4Gy68Qa9HR6SZ39wZD_sCDV-RMVfTDhB7ru4Vom-sQBr1eLhDHGVbupXAMs0GcHJX3qAHgfbiW5JaysHYfZobO7BVfK2HDeRtTGEII3cvgW0JbKUNq-T0sXtni4qmDC"; //put your server key here 
+    let fcm = new FCM(serverKey);
+    let { notification, data } = req.body 
+    let message = {
+      to: userFcm.fcmToken,
+      notification,
+      data
+    }
+    let result = await (new Promise((resolve, reject) => {
+      fcm.send(message, (err, r) => {
+        if(err) reject(err)
+        else resolve(r)
+      })
+    }))
+
+    return res.status(200).json({
+      success: true,
+      fcmResponse: result
+    })
+
+  } catch(e) {
+    return res.status(400).json({
+      error: true,
+      message: e
+    })   
+  }
+}
