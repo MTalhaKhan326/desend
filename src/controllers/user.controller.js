@@ -145,13 +145,13 @@ exports.generateRTCToken = async (req, resp, next) => {
     var fcm = new FCM(serverKey);
     var message = { // this may vary according to the message type (single recipient, multicast, topic, et cetera)
       to: fcmToken, 
-      notification: {
-        title: 'Accept call?', 
-        body: 'Click Accept to accept the call!',
-        android: {
-          channelId: "some_1",
-        }
-      },
+      // notification: {
+      //   title: 'Accept call?', 
+      //   body: 'Click Accept to accept the call!',
+      //   android: {
+      //     channelId: "some_1",
+      //   }
+      // },
       data: {
         agoraToken: token,
         channelName: channelName,
