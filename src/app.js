@@ -23,6 +23,7 @@ require("./utils/backup");
 const connectWithDB = async () => {
   try {
     await sequelize.authenticate();
+    await sequelize.sync()
     console.log('Connection To Database Has Been Established');
   } catch (error) {
     console.log('There is some error in syncing models', error);
