@@ -6,7 +6,10 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
     dialect: 'postgres',
     host: DB_HOST,
     port: DB_PORT,
-    logging: false
+    logging: false,
+    dialectOptions: {
+        ssl: false
+    }
 })
 
 module.exports = sequelize;
