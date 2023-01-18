@@ -164,7 +164,7 @@ exports.generateRTCToken = async (req, resp, next) => {
         caller: caller,
         callee: user,
         isGroupCall,
-        groupName,
+        groupName: "test group",
       }
     };
 
