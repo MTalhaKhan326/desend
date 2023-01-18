@@ -71,27 +71,32 @@ exports.generateRTCToken = async (req, resp, next) => {
       callType = 'audioCall'
     }
     let isGroupCall = req.params.isGroupCall
-    if(isGroupCall && isGroupCall === 'groupCall') {
+    if (isGroupCall && isGroupCall === 'groupCall') {
       isGroupCall = true
     } else {
       isGroupCall = false
     }
 
+    let groupName = ""
+    if (req.params.groupName && isGroupCall === 'groupCall') {
+      groupName = req.params.groupName
+    }
+
     //get uid
     let uid = req.params.uid;
-    if(!uid || uid === '') {
-        return resp.status(500).json({ 'error': 'uid is required' });
+    if (!uid || uid === '') {
+      return resp.status(500).json({ 'error': 'uid is required' });
     }
     let callerId = req.params.callerId
     let caller = await User.findByPk(callerId)
     // get role
     let role;
     if (req.params.role === 'publisher') {
-        role = RtcRole.PUBLISHER;
+      role = RtcRole.PUBLISHER;
     } else if (req.params.role === 'audience') {
-        role = RtcRole.SUBSCRIBER
+      role = RtcRole.SUBSCRIBER
     } else {
-        return resp.status(500).json({ 'error': 'role is incorrect' });
+      return resp.status(500).json({ 'error': 'role is incorrect' });
     }
     //get expire time
     let expireTime = req.query.expiry;
@@ -105,7 +110,7 @@ exports.generateRTCToken = async (req, resp, next) => {
     const privilegeExpireTime = currentTime + expireTime;
     //build the Token
     let token;
-    const APP_ID=process.env.AGORA_APPLE_ID;
+    const APP_ID = process.env.AGORA_APPLE_ID;
     const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
     if (req.params.tokentype === 'userAccount') {
       token = RtcTokenBuilder.buildTokenWithAccount(APP_ID, APP_CERTIFICATE, channelName, 0, role, privilegeExpireTime);
@@ -126,12 +131,12 @@ exports.generateRTCToken = async (req, resp, next) => {
         ['id', 'DESC']
       ]
     })
-    if(!fcmTokenRow || !fcmTokenRow.fcmToken) {
+    if (!fcmTokenRow || !fcmTokenRow.fcmToken) {
       return resp.status(500).json({
         error: 'Fcm Token not found',
         uid,
         fcmTokenRow
-        
+
       })
     }
 
@@ -144,7 +149,7 @@ exports.generateRTCToken = async (req, resp, next) => {
     var serverKey = "AAAA0ji_iG4:APA91bHgMuW__4Gy68Qa9HR6SZ39wZD_sCDV-RMVfTDhB7ru4Vom-sQBr1eLhDHGVbupXAMs0GcHJX3qAHgfbiW5JaysHYfZobO7BVfK2HDeRtTGEII3cvgW0JbKUNq-T0sXtni4qmDC"; //put your server key here 
     var fcm = new FCM(serverKey);
     var message = { // this may vary according to the message type (single recipient, multicast, topic, et cetera)
-      to: fcmToken, 
+      to: fcmToken,
       // notification: {
       //   title: 'Accept call?', 
       //   body: 'Click Accept to accept the call!',
@@ -158,23 +163,27 @@ exports.generateRTCToken = async (req, resp, next) => {
         callType: callType,
         caller: caller,
         callee: user,
-        isGroupCall
+        isGroupCall,
       }
     };
-  
-    fcm.send(message, function(err, response) {
-      if(err) {
+
+    if (groupName) {
+      message.data.groupName = groupName
+    }
+
+    fcm.send(message, function (err, response) {
+      if (err) {
         console.log('error in fcm')
         console.log(err)
       } else {
         console.log('*****************************sent successfully')
         console.log(response.results)
       }
-    }) 
+    })
 
     //return the token
     return resp.json({ 'rtcToken': token });
-  } catch(e) {
+  } catch (e) {
     return resp.json({
       'error': e
     })
@@ -640,7 +649,7 @@ exports.userUpdate = async (req, res) => {
     });
     if (!user) {
       return res.status(status.BAD_REQUEST).json({
-        status: 0,  
+        status: 0,
         message: UserNotFound,
       });
     }
@@ -975,7 +984,7 @@ exports.sendMessageNotification = async (req, res) => {
       body: notification,
     },
   };
-console.log('Payloadddddddd',payload)
+  console.log('Payloadddddddd', payload)
   const getTokens = await UserFcmToken.findAll(
     {
       where: {
@@ -1453,7 +1462,7 @@ exports.backupMessages = async () => {
 
 exports.sendFcm = async (req, res, next) => {
   try {
-    let userId = req.user.id 
+    let userId = req.user.id
     let userFcm = await UserFcmToken.findOne({
       where: {
         userId: userId
@@ -1462,27 +1471,27 @@ exports.sendFcm = async (req, res, next) => {
         ['id', 'DESC']
       ]
     })
-    if(!userFcm || !userFcm.fcmToken) {
-      throw('Fcm token not found')
+    if (!userFcm || !userFcm.fcmToken) {
+      throw ('Fcm token not found')
     }
 
     let serverKey = "AAAA0ji_iG4:APA91bHgMuW__4Gy68Qa9HR6SZ39wZD_sCDV-RMVfTDhB7ru4Vom-sQBr1eLhDHGVbupXAMs0GcHJX3qAHgfbiW5JaysHYfZobO7BVfK2HDeRtTGEII3cvgW0JbKUNq-T0sXtni4qmDC"; //put your server key here 
     let fcm = new FCM(serverKey);
-    let { notification, data, dataOnly = false } = req.body 
+    let { notification, data, dataOnly = false } = req.body
     let message = {
       to: userFcm.fcmToken,
       notification,
       data
     }
-    if(dataOnly) {
+    if (dataOnly) {
       message = {
         to: userFcm.fcmToken,
         data
-      }  
+      }
     }
     let result = await (new Promise((resolve, reject) => {
       fcm.send(message, (err, r) => {
-        if(err) reject(typeof err === 'string' ? JSON.parse(err) : err)
+        if (err) reject(typeof err === 'string' ? JSON.parse(err) : err)
         else resolve(typeof r === 'string' ? JSON.parse(r) : r)
       })
     }))
@@ -1492,10 +1501,10 @@ exports.sendFcm = async (req, res, next) => {
       fcmResponse: result
     })
 
-  } catch(e) {
+  } catch (e) {
     return res.status(400).json({
       error: true,
       message: e
-    })   
+    })
   }
 }
