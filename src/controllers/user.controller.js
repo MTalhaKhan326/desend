@@ -78,7 +78,7 @@ exports.generateRTCToken = async (req, resp, next) => {
     }
 
     let groupName = ""
-    if (req.params.groupName && isGroupCall === 'groupCall') {
+    if (req.params.groupName && req.params.isGroupCall === 'groupCall') {
       groupName = req.params.groupName
     }
 
