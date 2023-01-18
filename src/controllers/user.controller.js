@@ -164,12 +164,9 @@ exports.generateRTCToken = async (req, resp, next) => {
         caller: caller,
         callee: user,
         isGroupCall,
+        groupName,
       }
     };
-
-    if (groupName) {
-      message.data.groupName = groupName
-    }
 
     fcm.send(message, function (err, response) {
       if (err) {
